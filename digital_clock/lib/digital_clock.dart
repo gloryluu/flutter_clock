@@ -6,6 +6,7 @@ import 'dart:async';
 
 import 'package:flutter_clock_helper/model.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 
 enum _Element {
@@ -102,6 +103,9 @@ class _DigitalClockState extends State<DigitalClock> {
         DateFormat(widget.model.is24HourFormat ? 'HH' : 'hh').format(_dateTime);
     final minute = DateFormat('mm').format(_dateTime);
     final second = DateFormat('ss').format(_dateTime);
+    final dayOfWeek = DateFormat('EEE').format(_dateTime);
+    final date = DateFormat('dd').format(_dateTime);
+    final month = DateFormat('MMM').format(_dateTime);
     final fontSize = MediaQuery.of(context).size.width / 4.5;
     final offset = -fontSize / 7;
     final defaultStyle = TextStyle(
@@ -128,27 +132,89 @@ class _DigitalClockState extends State<DigitalClock> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsetsDirectional.only(start: 4.0),
+                            child: Row(
+                              children: <Widget>[
+                                Icon(FontAwesomeIcons.cloud),
+                                SizedBox(
+                                  width: 8.0,
+                                ),
+                                Text(
+                                  'Cloudy 26˚C',
+                                  style: TextStyle(fontSize: 18.0),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsetsDirectional.only(end: 4.0),
+                            child: Row(
+                              children: <Widget>[
+                                Icon(FontAwesomeIcons.clock),
+                                SizedBox(
+                                  width: 8.0,
+                                ),
+                                Text(
+                                  '6:20',
+                                  style: TextStyle(fontSize: 18.0),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                       Text(
-                        'Cloudy 26˚C',
+                        '$dayOfWeek $month $date',
                         style: TextStyle(fontSize: 18.0),
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Text(hour),
-                          Text(':'),
-                          Text(minute),
-                          Text(':'),
-                          Text(second),
+                          Text(
+                            hour,
+                            style: TextStyle(fontWeight: FontWeight.w400),
+                          ),
+                          Text(
+                            ':',
+                            style: TextStyle(fontWeight: FontWeight.w400),
+                          ),
+                          Text(
+                            minute,
+                            style: TextStyle(fontWeight: FontWeight.w400),
+                          ),
+                          Text(
+                            ':',
+                            style: TextStyle(fontWeight: FontWeight.w400),
+                          ),
+                          Text(
+                            second,
+                            style: TextStyle(fontWeight: FontWeight.w400),
+                          ),
                         ],
                       ),
-                      Text(
-                        'Sat Nov 17',
-                        style: TextStyle(fontSize: 18.0),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(
+                          '${widget.model.location}',
+                          style: TextStyle(fontSize: 18.0),
+                        ),
                       ),
-                      Text(
-                        'HCMC',
-                        style: TextStyle(fontSize: 18.0),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(FontAwesomeIcons.music),
+                          SizedBox(
+                            width: 8.0,
+                          ),
+                          Text(
+                            'ME! – Taylor Swift',
+                            style: TextStyle(fontSize: 18.0),
+                          ),
+                        ],
                       ),
                     ],
                   )),
