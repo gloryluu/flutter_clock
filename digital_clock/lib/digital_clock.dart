@@ -141,7 +141,7 @@ class _DigitalClockState extends State<DigitalClock> {
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: _locationWidget('${widget.model.location}'),
                       ),
-                      _musicWidget(),
+                      _musicWidget('ME • Taylor Swift'),
                     ],
                   )),
               // Positioned(left: offset, top: 0, child: Text(hour)),
@@ -186,8 +186,12 @@ class _DigitalClockState extends State<DigitalClock> {
   Widget _alarmWidget() =>
       _textIconWidget(Icon(FontAwesomeIcons.clock), '6:20');
 
-  Widget _musicWidget() =>
-      _textIconWidget(Icon(FontAwesomeIcons.music), 'ME • Taylor Swift');
+  Widget _musicWidget(String title) => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          _textIconWidget(Icon(FontAwesomeIcons.music), title),
+        ],
+      );
 
   Widget _dateWidget(String date) => Text(
         '$date',
