@@ -8,6 +8,7 @@ import 'package:flutter_clock_helper/model.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:digital_clock/stripe_clipper.dart';
 
 enum _Element {
   background,
@@ -17,7 +18,7 @@ enum _Element {
 
 final _lightTheme = {
   _Element.background: Color(0xFF81B3FE),
-  _Element.text: Colors.black,
+  _Element.text: Colors.white,
   _Element.shadow: Colors.black,
 };
 
@@ -107,19 +108,19 @@ class _DigitalClockState extends State<DigitalClock> {
     final date = DateFormat('dd').format(_dateTime);
     final month = DateFormat('MMM').format(_dateTime);
     final fontSize = MediaQuery.of(context).size.width / 4.5;
-    final offset = -fontSize / 7;
+
     final defaultStyle = TextStyle(
       color: colors[_Element.text],
       // fontFamily: 'PressStart2P',
       fontSize: fontSize,
-      // shadows: [
-      //   Shadow(
-      //     blurRadius: 0,
-      //     color: colors[_Element.shadow],
-      //     offset: Offset(10, 0),
-      //   ),
-      // ],
     );
+
+    final smallStyle = TextStyle(
+      color: colors[_Element.text],
+      // fontFamily: 'PressStart2P',
+      fontSize: 18.0,
+    );
+
     return Container(
       // color: colors[_Element.background],
       child: Center(
@@ -127,25 +128,28 @@ class _DigitalClockState extends State<DigitalClock> {
           style: defaultStyle,
           child: Stack(
             children: <Widget>[
+              StripsWidget(
+                color1: Color.fromRGBO(231, 79, 36, 1),
+                color2: Color.fromRGBO(218, 59, 32, 1),
+                gap: 100,
+                noOfStrips: 10,
+              ),
               Align(
                   alignment: Alignment.center,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      _headerWidget(),
-                      _dateWidget('$dayOfWeek $month $date'),
-                      _timeWidget(
-                        '$hour:$minute:$second',
-                      ),
+                      _headerWidget(smallStyle),
+                      _dateWidget('$dayOfWeek $month $date', smallStyle),
+                      _timeWidget('$hour:$minute:$second', defaultStyle),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: _locationWidget('${widget.model.location}'),
+                        child: _locationWidget(
+                            '${widget.model.location}', smallStyle),
                       ),
-                      _musicWidget('ME • Taylor Swift'),
+                      _musicWidget('ME • Taylor Swift', smallStyle),
                     ],
                   )),
-              // Positioned(left: offset, top: 0, child: Text(hour)),
-              // Positioned(right: offset, bottom: offset, child: Text(minute)),
             ],
           ),
         ),
@@ -153,58 +157,69 @@ class _DigitalClockState extends State<DigitalClock> {
     );
   }
 
-  Widget _textIconWidget(Icon icon, String text) => Row(children: <Widget>[
-        icon,
-        SizedBox(
-          width: 8.0,
-        ),
-        Text(
-          text,
-          style: TextStyle(fontSize: 18.0),
-        ),
-      ]);
+  Widget _textIconWidget(IconData iconData, String text, TextStyle style) {
+    final colors = Theme.of(context).brightness == Brightness.light
+        ? _lightTheme
+        : _darkTheme;
+    return Row(children: <Widget>[
+      Icon(
+        iconData,
+        color: colors[_Element.text],
+      ),
+      SizedBox(
+        width: 8.0,
+      ),
+      Text(
+        text,
+        style: style,
+      ),
+    ]);
+  }
 
-  Widget _headerWidget() {
+  Widget _headerWidget(TextStyle style) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Padding(
           padding: const EdgeInsetsDirectional.only(start: 4.0),
-          child: _weatherWidget(),
+          child: _weatherWidget(style),
         ),
         Padding(
           padding: const EdgeInsetsDirectional.only(end: 4.0),
-          child: _alarmWidget(),
+          child: _alarmWidget(style),
         ),
       ],
     );
   }
 
-  Widget _weatherWidget() =>
-      _textIconWidget(Icon(FontAwesomeIcons.cloud), 'Cloudy 26˚C');
+  Widget _weatherWidget(TextStyle style) {
+    return _textIconWidget(FontAwesomeIcons.cloud, 'Cloudy 26˚C', style);
+  }
 
-  Widget _alarmWidget() =>
-      _textIconWidget(Icon(FontAwesomeIcons.clock), '6:20');
+  Widget _alarmWidget(TextStyle style) =>
+      _textIconWidget(FontAwesomeIcons.clock, '6:20', style);
 
-  Widget _musicWidget(String title) => Row(
+  Widget _musicWidget(String title, TextStyle style) => Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          _textIconWidget(Icon(FontAwesomeIcons.music), title),
+          _textIconWidget(FontAwesomeIcons.music, title, style),
         ],
       );
 
-  Widget _dateWidget(String date) => Text(
+  Widget _dateWidget(String date, TextStyle style) => Text(
         '$date',
-        style: TextStyle(fontSize: 18.0),
+        style: style,
       );
 
-  Widget _timeWidget(String time) => Text(
-        '$time',
-        style: TextStyle(fontWeight: FontWeight.w400),
-      );
+  Widget _timeWidget(String time, TextStyle style) {
+    return Text(
+      '$time',
+      style: style,
+    );
+  }
 
-  Widget _locationWidget(String location) => Text(
+  Widget _locationWidget(String location, TextStyle style) => Text(
         '$location',
-        style: TextStyle(fontSize: 18.0),
+        style: style,
       );
 }
