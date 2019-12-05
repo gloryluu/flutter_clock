@@ -132,90 +132,16 @@ class _DigitalClockState extends State<DigitalClock> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsetsDirectional.only(start: 4.0),
-                            child: Row(
-                              children: <Widget>[
-                                Icon(FontAwesomeIcons.cloud),
-                                SizedBox(
-                                  width: 8.0,
-                                ),
-                                Text(
-                                  'Cloudy 26˚C',
-                                  style: TextStyle(fontSize: 18.0),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsetsDirectional.only(end: 4.0),
-                            child: Row(
-                              children: <Widget>[
-                                Icon(FontAwesomeIcons.clock),
-                                SizedBox(
-                                  width: 8.0,
-                                ),
-                                Text(
-                                  '6:20',
-                                  style: TextStyle(fontSize: 18.0),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      Text(
-                        '$dayOfWeek $month $date',
-                        style: TextStyle(fontSize: 18.0),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            hour,
-                            style: TextStyle(fontWeight: FontWeight.w400),
-                          ),
-                          Text(
-                            ':',
-                            style: TextStyle(fontWeight: FontWeight.w400),
-                          ),
-                          Text(
-                            minute,
-                            style: TextStyle(fontWeight: FontWeight.w400),
-                          ),
-                          Text(
-                            ':',
-                            style: TextStyle(fontWeight: FontWeight.w400),
-                          ),
-                          Text(
-                            second,
-                            style: TextStyle(fontWeight: FontWeight.w400),
-                          ),
-                        ],
+                      _headerWidget(),
+                      _dateWidget('$dayOfWeek $month $date'),
+                      _timeWidget(
+                        '$hour:$minute:$second',
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: Text(
-                          '${widget.model.location}',
-                          style: TextStyle(fontSize: 18.0),
-                        ),
+                        child: _locationWidget('${widget.model.location}'),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Icon(FontAwesomeIcons.music),
-                          SizedBox(
-                            width: 8.0,
-                          ),
-                          Text(
-                            'ME! – Taylor Swift',
-                            style: TextStyle(fontSize: 18.0),
-                          ),
-                        ],
-                      ),
+                      _musicWidget(),
                     ],
                   )),
               // Positioned(left: offset, top: 0, child: Text(hour)),
@@ -226,4 +152,55 @@ class _DigitalClockState extends State<DigitalClock> {
       ),
     );
   }
+
+  Widget _textIconWidget(Icon icon, String text) => Row(children: <Widget>[
+        icon,
+        SizedBox(
+          width: 8.0,
+        ),
+        Text(
+          text,
+          style: TextStyle(fontSize: 18.0),
+        ),
+      ]);
+
+  Widget _headerWidget() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsetsDirectional.only(start: 4.0),
+          child: _weatherWidget(),
+        ),
+        Padding(
+          padding: const EdgeInsetsDirectional.only(end: 4.0),
+          child: _alarmWidget(),
+        ),
+      ],
+    );
+  }
+
+  Widget _weatherWidget() =>
+      _textIconWidget(Icon(FontAwesomeIcons.cloud), 'Cloudy 26˚C');
+
+  Widget _alarmWidget() =>
+      _textIconWidget(Icon(FontAwesomeIcons.clock), '6:20');
+
+  Widget _musicWidget() =>
+      _textIconWidget(Icon(FontAwesomeIcons.music), 'ME • Taylor Swift');
+
+  Widget _dateWidget(String date) => Text(
+        '$date',
+        style: TextStyle(fontSize: 18.0),
+      );
+
+  Widget _timeWidget(String time) => Text(
+        '$time',
+        style: TextStyle(fontWeight: FontWeight.w400),
+      );
+
+  Widget _locationWidget(String location) => Text(
+        '$location',
+        style: TextStyle(fontSize: 18.0),
+      );
 }
