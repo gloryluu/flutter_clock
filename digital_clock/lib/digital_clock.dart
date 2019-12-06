@@ -122,10 +122,11 @@ class _DigitalClockState extends State<DigitalClock> {
     );
 
     final boldStyle = TextStyle(
-        color: colors[_Element.text],
-        fontFamily: 'Montserrat',
-        fontSize: bigFontSize,
-        fontWeight: FontWeight.bold);
+      color: colors[_Element.text],
+      fontFamily: 'Montserrat',
+      fontSize: bigFontSize,
+      fontWeight: FontWeight.bold,
+    );
 
     return Container(
       // color: colors[_Element.background],
@@ -138,8 +139,9 @@ class _DigitalClockState extends State<DigitalClock> {
                 left: 0,
                 right: 0,
                 child: Image(
-                    image: AssetImage('assets/images/geometric.png'),
-                    fit: BoxFit.fill),
+                  image: AssetImage('assets/images/geometric.png'),
+                  fit: BoxFit.fill,
+                ),
               ),
               Align(
                   alignment: Alignment.center,
@@ -151,9 +153,17 @@ class _DigitalClockState extends State<DigitalClock> {
                         widget.model.temperatureString,
                         smallStyle,
                       ),
-                      _dateWidget('$dayOfWeek, $month $date'),
-                      _timeWidget('$hour:$minute', boldStyle),
-                      _locationWidget('${widget.model.location}', smallStyle)
+                      _dateWidget(
+                        '$dayOfWeek, $month $date',
+                      ),
+                      _timeWidget(
+                        '$hour:$minute',
+                        boldStyle,
+                      ),
+                      _locationWidget(
+                        '${widget.model.location}',
+                        smallStyle,
+                      )
                     ],
                   )),
             ],
@@ -193,7 +203,10 @@ class _DigitalClockState extends State<DigitalClock> {
         Padding(
           padding: const EdgeInsetsDirectional.only(start: 4.0),
           child: _weatherWidget(
-              _weatherIconData, '$_weatherCondition $temperature', style),
+            _weatherIconData,
+            '$_weatherCondition $temperature',
+            style,
+          ),
         ),
         Padding(
           padding: const EdgeInsetsDirectional.only(end: 4.0),
