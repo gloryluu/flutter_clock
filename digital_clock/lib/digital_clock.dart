@@ -111,19 +111,19 @@ class _DigitalClockState extends State<DigitalClock> {
 
     final defaultStyle = TextStyle(
       color: colors[_Element.text],
-      // fontFamily: 'PressStart2P',
+      fontFamily: 'Montserrat',
       fontSize: fontSize,
     );
 
     final smallStyle = TextStyle(
       color: colors[_Element.text],
-      // fontFamily: 'PressStart2P',
+      fontFamily: 'Montserrat',
       fontSize: smallFontSize,
     );
 
     final boldStyle = TextStyle(
         color: colors[_Element.text],
-        // fontFamily: 'PressStart2P',
+        fontFamily: 'Montserrat',
         fontSize: bigFontSize,
         fontWeight: FontWeight.bold);
 
