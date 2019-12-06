@@ -8,7 +8,6 @@ import 'package:flutter_clock_helper/model.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:digital_clock/stripe_clipper.dart';
 
 enum _Element {
   background,
@@ -80,18 +79,18 @@ class _DigitalClockState extends State<DigitalClock> {
       _dateTime = DateTime.now();
       // Update once per minute. If you want to update every second, use the
       // following code.
-      // _timer = Timer(
-      //   Duration(minutes: 1) -
-      //       Duration(seconds: _dateTime.second) -
-      //       Duration(milliseconds: _dateTime.millisecond),
-      //   _updateTime,
-      // );
-      // Update once per second, but make sure to do it at the beginning of each
-      // new second, so that the clock is accurate.
       _timer = Timer(
-        Duration(seconds: 1) - Duration(milliseconds: _dateTime.millisecond),
+        Duration(minutes: 1) -
+            Duration(seconds: _dateTime.second) -
+            Duration(milliseconds: _dateTime.millisecond),
         _updateTime,
       );
+      // Update once per second, but make sure to do it at the beginning of each
+      // new second, so that the clock is accurate.
+      // _timer = Timer(
+      //   Duration(seconds: 1) - Duration(milliseconds: _dateTime.millisecond),
+      //   _updateTime,
+      // );
     });
   }
 
@@ -103,11 +102,12 @@ class _DigitalClockState extends State<DigitalClock> {
     final hour =
         DateFormat(widget.model.is24HourFormat ? 'HH' : 'hh').format(_dateTime);
     final minute = DateFormat('mm').format(_dateTime);
-    final second = DateFormat('ss').format(_dateTime);
     final dayOfWeek = DateFormat('EEE').format(_dateTime);
     final date = DateFormat('dd').format(_dateTime);
     final month = DateFormat('MMM').format(_dateTime);
-    final fontSize = MediaQuery.of(context).size.width / 4.5;
+    final fontSize = MediaQuery.of(context).size.width / 28;
+    final smallFontSize = MediaQuery.of(context).size.width / 38;
+    final bigFontSize = MediaQuery.of(context).size.width / 4.5;
 
     final defaultStyle = TextStyle(
       color: colors[_Element.text],
@@ -118,8 +118,14 @@ class _DigitalClockState extends State<DigitalClock> {
     final smallStyle = TextStyle(
       color: colors[_Element.text],
       // fontFamily: 'PressStart2P',
-      fontSize: 18.0,
+      fontSize: smallFontSize,
     );
+
+    final boldStyle = TextStyle(
+        color: colors[_Element.text],
+        // fontFamily: 'PressStart2P',
+        fontSize: bigFontSize,
+        fontWeight: FontWeight.bold);
 
     return Container(
       // color: colors[_Element.background],
@@ -128,26 +134,26 @@ class _DigitalClockState extends State<DigitalClock> {
           style: defaultStyle,
           child: Stack(
             children: <Widget>[
-              StripsWidget(
-                color1: Color.fromRGBO(231, 79, 36, 1),
-                color2: Color.fromRGBO(218, 59, 32, 1),
-                gap: 100,
-                noOfStrips: 10,
+              Positioned(
+                left: 0,
+                right: 0,
+                child: Image(
+                    image: AssetImage('assets/images/geometric.png'),
+                    fit: BoxFit.fill),
               ),
               Align(
                   alignment: Alignment.center,
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      _headerWidget(smallStyle),
-                      _dateWidget('$dayOfWeek $month $date', smallStyle),
-                      _timeWidget('$hour:$minute:$second', defaultStyle),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: _locationWidget(
-                            '${widget.model.location}', smallStyle),
+                      _headerWidget(
+                        widget.model.weatherCondition,
+                        widget.model.temperatureString,
+                        smallStyle,
                       ),
-                      _musicWidget('ME • Taylor Swift', smallStyle),
+                      _dateWidget('$dayOfWeek, $month $date'),
+                      _timeWidget('$hour:$minute', boldStyle),
+                      _locationWidget('${widget.model.location}', smallStyle)
                     ],
                   )),
             ],
@@ -176,13 +182,18 @@ class _DigitalClockState extends State<DigitalClock> {
     ]);
   }
 
-  Widget _headerWidget(TextStyle style) {
+  Widget _headerWidget(
+      WeatherCondition condition, String temperature, TextStyle style) {
+    String _weatherCondition = _weatherConditionText(condition);
+    IconData _weatherIconData = _weatherConditionIcon(condition);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Padding(
           padding: const EdgeInsetsDirectional.only(start: 4.0),
-          child: _weatherWidget(style),
+          child: _weatherWidget(
+              _weatherIconData, '$_weatherCondition $temperature', style),
         ),
         Padding(
           padding: const EdgeInsetsDirectional.only(end: 4.0),
@@ -192,24 +203,64 @@ class _DigitalClockState extends State<DigitalClock> {
     );
   }
 
-  Widget _weatherWidget(TextStyle style) {
-    return _textIconWidget(FontAwesomeIcons.cloud, 'Cloudy 26˚C', style);
+  IconData _weatherConditionIcon(WeatherCondition condition) {
+    switch (condition) {
+      case WeatherCondition.snowy:
+        return FontAwesomeIcons.snowflake;
+        break;
+      case WeatherCondition.foggy:
+        return FontAwesomeIcons.cloud;
+        break;
+      case WeatherCondition.windy:
+        return FontAwesomeIcons.wind;
+        break;
+      case WeatherCondition.rainy:
+        return FontAwesomeIcons.cloudRain;
+        break;
+      case WeatherCondition.sunny:
+        return FontAwesomeIcons.sun;
+        break;
+      case WeatherCondition.thunderstorm:
+        return FontAwesomeIcons.cloudRain;
+        break;
+      default:
+        return FontAwesomeIcons.cloud;
+    }
+  }
+
+  String _weatherConditionText(WeatherCondition condition) {
+    switch (condition) {
+      case WeatherCondition.snowy:
+        return 'Snowy';
+        break;
+      case WeatherCondition.foggy:
+        return 'Cloud';
+        break;
+      case WeatherCondition.windy:
+        return 'Windy';
+        break;
+      case WeatherCondition.rainy:
+        return 'Cloud Rain';
+        break;
+      case WeatherCondition.sunny:
+        return 'Sunny';
+        break;
+      case WeatherCondition.thunderstorm:
+        return 'Thunderstorm';
+        break;
+      default:
+        return 'Cloud';
+    }
+  }
+
+  Widget _weatherWidget(IconData iconData, String text, TextStyle style) {
+    return _textIconWidget(iconData, text, style);
   }
 
   Widget _alarmWidget(TextStyle style) =>
       _textIconWidget(FontAwesomeIcons.clock, '6:20', style);
 
-  Widget _musicWidget(String title, TextStyle style) => Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          _textIconWidget(FontAwesomeIcons.music, title, style),
-        ],
-      );
-
-  Widget _dateWidget(String date, TextStyle style) => Text(
-        '$date',
-        style: style,
-      );
+  Widget _dateWidget(String date) => Text('$date');
 
   Widget _timeWidget(String time, TextStyle style) {
     return Text(
